@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var GenreSchema = new Schema(
     {
-        title: {type: String, minLength: 3, maxLength: 100, required: true}
+        name: {type: String, minLength: 3, maxLength: 100, required: true}
     }
 );
 
