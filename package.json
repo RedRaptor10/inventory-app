@@ -8,6 +8,7 @@
     "serverstart": "DEBUG=inventory-app:* npm run devstart"
   },
   "dependencies": {
+    "async": "^3.2.3",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",
     "debug": "~0.7.4",
