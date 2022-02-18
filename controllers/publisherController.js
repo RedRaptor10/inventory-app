@@ -1,4 +1,7 @@
 var Publisher = require('../models/publisher');
+var Game = require('../models/game');
+var async = require('async');
+const { body, validationResult } = require('express-validator');
 
 // Display list of all publishers.
 exports.publisher_list = function(req, res, next) {
@@ -11,9 +14,27 @@ exports.publisher_list = function(req, res, next) {
     });
 };
 
-// Display detail page for a specific publisher.
-exports.publisher_detail = function(req, res) {
-    res.send('N/A');
+// Display detail page for a specific Publisher.
+exports.publisher_details = function(req, res, next) {
+    async.parallel({
+        publisher: function(callback) {
+            Publisher.findById(req.params.id)
+            .exec(callback)
+        },
+        publisher_games: function(callback) {
+            Game.find({ 'publisher': req.params.id }, 'name description')
+            .exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); } // Error
+        if (results.publisher==null) { // No results
+            var err = new Error('Publisher not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Success
+        res.render('publisher_details', { title: results.publisher.name, publisher: results.publisher, publisher_games: results.publisher_games });
+    });
 };
 
 // Display publisher create form on GET.

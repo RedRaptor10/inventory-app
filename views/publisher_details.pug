@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  p #[strong Description:] #{publisher.description}
+
+  hr
+  p
+    a(href=publisher.url+'/delete') Delete Publisher
+  p
+    a(href=publisher.url+'/update') Update Publisher

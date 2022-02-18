@@ -31,7 +31,7 @@ router.get('/game/:id/update', game_controller.game_update_get);
 router.post('/game/:id/update', game_controller.game_update_post);
 
 // GET request for one Game.
-router.get('/game/:id', game_controller.game_detail);
+router.get('/game/:id', game_controller.game_details);
 
 // GET request for list of all Game items.
 router.get('/games', game_controller.game_list);
@@ -57,7 +57,7 @@ router.get('/publisher/:id/update', publisher_controller.publisher_update_get);
 router.post('/publisher/:id/update', publisher_controller.publisher_update_post);
 
 // GET request for one Publisher.
-router.get('/publisher/:id', publisher_controller.publisher_detail);
+router.get('/publisher/:id', publisher_controller.publisher_details);
 
 // GET request for list of all Publishers.
 router.get('/publishers', publisher_controller.publisher_list);
@@ -83,7 +83,7 @@ router.get('/genre/:id/update', genre_controller.genre_update_get);
 router.post('/genre/:id/update', genre_controller.genre_update_post);
 
 // GET request for one Genre.
-router.get('/genre/:id', genre_controller.genre_detail);
+router.get('/genre/:id', genre_controller.genre_details);
 
 // GET request for list of all Genre.
 router.get('/genres', genre_controller.genre_list);
@@ -109,7 +109,7 @@ router.get('/platform/:id/update', platform_controller.platform_update_get);
 router.post('/platform/:id/update', platform_controller.platform_update_post);
 
 // GET request for one Platform.
-router.get('/platform/:id', platform_controller.platform_detail);
+router.get('/platform/:id', platform_controller.platform_details);
 
 // GET request for list of all Platform.
 router.get('/platforms', platform_controller.platform_list);

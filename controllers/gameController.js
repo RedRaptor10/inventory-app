@@ -37,10 +37,26 @@ exports.game_list = function(req, res, next) {
         });
 };
 
-
 // Display detail page for a specific game.
-exports.game_detail = function(req, res) {
-    res.send('N/A');
+exports.game_details = function(req, res, next) {
+    async.parallel({
+        game: function(callback) {
+            Game.findById(req.params.id)
+                .populate('publisher')
+                .populate('genre')
+                .populate('platform')
+                .exec(callback);
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.game==null) { // No results
+            var err = new Error('Game not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Success
+        res.render('game_details', { title: results.game.title, game: results.game });
+    });
 };
 
 // Display game create form on GET.

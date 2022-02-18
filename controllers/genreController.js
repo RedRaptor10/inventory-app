@@ -1,4 +1,7 @@
 var Genre = require('../models/genre');
+var Game = require('../models/game');
+var async = require('async');
+const { body, validationResult } = require('express-validator');
 
 // Display list of all genres.
 exports.genre_list = function(req, res, next) {
@@ -12,8 +15,26 @@ exports.genre_list = function(req, res, next) {
 };
 
 // Display detail page for a specific genre.
-exports.genre_detail = function(req, res) {
-    res.send('N/A');
+exports.genre_details = function(req, res, next) {
+    async.parallel({
+        genre: function(callback) {
+            Genre.findById(req.params.id)
+            .exec(callback);
+        },
+        genre_games: function(callback) {
+            Game.find({ 'genre': req.params.id })
+            .exec(callback);
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.genre==null) { // No results
+            var err = new Error('Genre not found');
+            err.status = 400;
+            return next(err);
+        }
+        // Success
+        res.render('genre_details', { title: results.genre.name, genre: results.genre, genre_games: results.genre_games });
+    });
 };
 
 // Display genre create form on GET.

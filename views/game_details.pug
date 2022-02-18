@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  p #[strong Publisher:] 
+    a(href=game.publisher.url) #{game.publisher.name}
+  p #[strong Description:] #{game.description}
+  p #[strong Genre(s):] 
+    each g, index in game.genre
+      a(href=g.url) #{g.name}
+      if index < game.genre.length - 1
+        |, 
+  p #[strong Platform(s):] 
+    each p, index in game.platform
+      a(href=p.url) #{p.name}
+      if index < game.platform.length - 1
+        |, 
+  p #[strong Price:] $#{game.price}
+  p #[strong Qty:] #{game.qty}
+
+  hr
+  p
+    a(href=game.url+'/delete') Delete Game
+  p
+    a(href=game.url+'/update') Update Game

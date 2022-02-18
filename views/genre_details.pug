@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  div(style='margin-left: 20px; margin-top: 20px')
+
+  h3 Games
+
+  dl
+    each game in genre_games
+      dt
+        a(href=game.url) #{game.title}
+      dd #{game.description}
+
+    else
+      p Empty
+
+  hr
+  p
+    a(href=genre.url+'/delete') Delete genre
+  p
+    a(href=genre.url+'/update') Update genre

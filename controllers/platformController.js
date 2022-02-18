@@ -1,4 +1,7 @@
 var Platform = require('../models/platform');
+var Game = require('../models/game');
+var async = require('async');
+const { body, validationResult } = require('express-validator');
 
 // Display list of all platforms.
 exports.platform_list = function(req, res) {
@@ -12,8 +15,26 @@ exports.platform_list = function(req, res) {
 };
 
 // Display detail page for a specific platform.
-exports.platform_detail = function(req, res) {
-    res.send('N/A');
+exports.platform_details = function(req, res) {
+    async.parallel({
+        platform: function(callback) {
+            Platform.findById(req.params.id)
+            .exec(callback);
+        },
+        platform_games: function(callback) {
+            Game.find({ 'platform': req.params.id })
+            .exec(callback);
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.platform==null) { // No results
+            var err = new Error('Platform not found');
+            err.status = 400;
+            return next(err);
+        }
+        // Success
+        res.render('platform_details', { title: results.platform.name, platform: results.platform, platform_games: results.platform_games });
+    });
 };
 
 // Display platform create form on GET.
