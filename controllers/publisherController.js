@@ -1,8 +1,14 @@
 var Publisher = require('../models/publisher');
 
 // Display list of all publishers.
-exports.publisher_list = function(req, res) {
-    res.send('N/A');
+exports.publisher_list = function(req, res, next) {
+    Publisher.find()
+    .sort([['name', 'ascending']])
+    .exec(function(err, list_publishers) {
+        if (err) return next(err)
+        // Success
+        res.render('publisher_list', {title: 'Publishers', publisher_list: list_publishers});
+    });
 };
 
 // Display detail page for a specific publisher.

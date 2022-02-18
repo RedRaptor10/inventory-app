@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each game in game_list
+      li
+        |  Title: 
+        a(href=game.url) #{game.title}
+        |  Publisher: 
+        a(href=game.publisher.url) #{game.publisher.name})
+
+    else
+      li Empty

@@ -2,7 +2,13 @@ var Platform = require('../models/platform');
 
 // Display list of all platforms.
 exports.platform_list = function(req, res) {
-    res.send('N/A');
+    Platform.find()
+        .sort([['name', 'ascending']])
+        .exec(function(err, list_platforms) {
+            if (err) return next(err)
+            // Success
+            res.render('platform_list', {title: 'Platforms', platform_list: list_platforms});
+        });
 };
 
 // Display detail page for a specific platform.

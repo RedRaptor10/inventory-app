@@ -2,4 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to the Game Inventory, a basic inventory website made in Express that contains a catalog of games.
+
+  if error
+    p Error
+  else
+    h3 Statistics:
+
+  ul
+    li #[strong Games:] !{data.game_count}
+    li #[strong Publishers:] !{data.publisher_count}
+    li #[strong Genres:] !{data.genre_count}
+    li #[strong Platforms:] !{data.platform_count}
