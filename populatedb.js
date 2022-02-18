@@ -13,8 +13,8 @@ if (!userArgs[0].startsWith('mongodb')) {
 var async = require('async')
 var Game = require('./models/game')
 var Publisher = require('./models/publisher')
-var Platform = require('./models/platform')
 var Genre = require('./models/genre')
+var Platform = require('./models/platform')
 
 
 var mongoose = require('mongoose');
@@ -26,16 +26,16 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var games = []
 var publishers = []
-var platforms = []
 var genres = []
+var platforms = []
 
-function gameCreate(title, publisher, description, platform, genre, price, qty, cb) {
+function gameCreate(title, publisher, description, genre, platform, price, qty, cb) {
   gamedetail = { 
     title: title,
     publisher: publisher,
     description: description,
-    platform: platform,
     genre: genre,
+    platform: platform,
     price: price,
     qty: qty
   }
@@ -68,20 +68,6 @@ function publisherCreate(name, description, cb) {
   }  );
 }
 
-function platformCreate(name, cb) {
-  var platform = new Platform({ name: name });
-       
-  platform.save(function (err) {
-    if (err) {
-      cb(err, null);
-      return;
-    }
-    console.log('New Platform: ' + platform);
-    platforms.push(platform)
-    cb(null, platform);
-  }   );
-}
-
 function genreCreate(name, cb) {
   var genre = new Genre({ name: name });
        
@@ -93,6 +79,20 @@ function genreCreate(name, cb) {
     console.log('New Genre: ' + genre);
     genres.push(genre)
     cb(null, genre);
+  }   );
+}
+
+function platformCreate(name, cb) {
+  var platform = new Platform({ name: name });
+       
+  platform.save(function (err) {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+    console.log('New Platform: ' + platform);
+    platforms.push(platform)
+    cb(null, platform);
   }   );
 }
 
@@ -110,25 +110,6 @@ function createPublishers(cb) {
         ],
         // optional callback
         cb);
-}
-
-function createPlatforms(cb) {
-  async.series([
-      function(callback) {
-        platformCreate('Nintendo 64', callback);
-      },
-      function(callback) {
-        platformCreate('PlayStation 4', callback);
-      },
-      function(callback) {
-        platformCreate('Xbox One', callback);
-      },
-      function(callback) {
-        platformCreate('PC', callback);
-      },
-      ],
-      // optional callback
-      cb);
 }
 
 function createGenres(cb) {
@@ -150,17 +131,36 @@ function createGenres(cb) {
       cb);
 }
 
+function createPlatforms(cb) {
+  async.series([
+      function(callback) {
+        platformCreate('Nintendo 64', callback);
+      },
+      function(callback) {
+        platformCreate('PlayStation 4', callback);
+      },
+      function(callback) {
+        platformCreate('Xbox One', callback);
+      },
+      function(callback) {
+        platformCreate('PC', callback);
+      },
+      ],
+      // optional callback
+      cb);
+}
+
 
 function createGames(cb) {
     async.parallel([
         function(callback) {
-          gameCreate("Super Mario 64", publishers[0], "Super Mario 64 is a 1996 platform game for the Nintendo 64, developed by Nintendo EAD and published by Nintendo.", [platforms[0]], [genres[0], genres[1]], 25.00, 10, callback);
+          gameCreate("Super Mario 64", publishers[0], "Super Mario 64 is a 1996 platform game for the Nintendo 64, developed by Nintendo EAD and published by Nintendo.", [genres[0], genres[1]], platforms[0], 25.00, 10, callback);
         },
         function(callback) {
-          gameCreate("Street Fighter V", publishers[1], "Street Fighter V is a fighting game developed by Capcom and Dimps and published by Capcom for the PlayStation 4 and Microsoft Windows in 2016.", [platforms[1], platforms[3]], [genres[2]], 50.00, 100, callback);
+          gameCreate("Street Fighter V", publishers[1], "Street Fighter V is a fighting game developed by Capcom and Dimps and published by Capcom for the PlayStation 4 and Microsoft Windows in 2016.", [genres[2]], [platforms[1], platforms[3]], 50.00, 100, callback);
         },
         function(callback) {
-          gameCreate("Halo Infinite", publishers[2], "Halo Infinite is a 2021 first-person shooter game developed by 343 Industries and published by Xbox Game Studios.", [platforms[2], platforms[3]], [genres[3]], 60.00, 500, callback);
+          gameCreate("Halo Infinite", publishers[2], "Halo Infinite is a 2021 first-person shooter game developed by 343 Industries and published by Xbox Game Studios.", [genres[3]], [platforms[2], platforms[3]], 60.00, 500, callback);
         }
         ],
         // optional callback
@@ -171,8 +171,8 @@ function createGames(cb) {
 
 async.series([
     createPublishers,
-    createPlatforms,
     createGenres,
+    createPlatforms,
     createGames
 ],
 // Optional callback
