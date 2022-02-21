@@ -78,13 +78,50 @@ exports.publisher_create_post = [
 ];
 
 // Display publisher delete form on GET.
-exports.publisher_delete_get = function(req, res) {
-    res.send('N/A');
+exports.publisher_delete_get = function(req, res, next) {
+    async.parallel({
+        publisher: function(callback) {
+            Publisher.findById(req.params.id).exec(callback)
+        },
+        publisher_games: function(callback) {
+            Game.find({ 'publisher': req.params.id }).exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.publisher==null) { // No results.
+            res.redirect('/catalog/publishers');
+        }
+        // Successful, so render.
+        res.render('publisher_delete', { title: 'Delete Publisher', publisher: results.publisher, publisher_games: results.publisher_games } );
+    });
 };
 
 // Handle publisher delete on POST.
-exports.publisher_delete_post = function(req, res) {
-    res.send('N/A');
+exports.publisher_delete_post = function(req, res, next) {
+    async.parallel({
+        publisher: function(callback) {
+          Publisher.findById(req.body.publisherid).exec(callback)
+        },
+        publisher_games: function(callback) {
+          Game.find({ 'publisher': req.body.publisherid }).exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        // Success
+        if (results.publisher_games.length > 0) {
+            // Publisher has games. Render in same way as for GET route.
+            res.render('publisher_delete', { title: 'Delete Publisher', publisher: results.publisher, publisher_games: results.publisher_games } );
+            return;
+        }
+        else {
+            // Publisher has no games. Delete object and redirect to the list of publishers.
+            Publisher.findByIdAndRemove(req.body.publisherid, function deletePublisher(err) {
+                if (err) { return next(err); }
+                // Success - go to publisher list
+                res.redirect('/catalog/publishers')
+            })
+        }
+    });
 };
 
 // Display publisher update form on GET.

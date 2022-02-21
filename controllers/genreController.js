@@ -89,12 +89,49 @@ exports.genre_create_post = [
 
 // Display genre delete form on GET.
 exports.genre_delete_get = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        genre: function(callback) {
+            Genre.findById(req.params.id).exec(callback)
+        },
+        genre_games: function(callback) {
+            Game.find({ 'genre': req.params.id }).exec(callback)
+        },
+      }, function(err, results) {
+          if (err) { return next(err); }
+          if (results.genre==null) { // No results.
+              res.redirect('/catalog/genres');
+          }
+          // Successful, so render.
+          res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_games: results.genre_games } );
+      });
 };
 
 // Handle genre delete on POST.
 exports.genre_delete_post = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        genre: function(callback) {
+          Genre.findById(req.body.genreid).exec(callback)
+        },
+        genre_games: function(callback) {
+          Game.find({ 'genre': req.body.genreid }).exec(callback)
+        },
+      }, function(err, results) {
+          if (err) { return next(err); }
+          // Success
+          if (results.genre_games.length > 0) {
+              // Genre has games. Render in same way as for GET route.
+              res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_games: results.genre_games } );
+              return;
+          }
+          else {
+              // Genre has no games. Delete object and redirect to the list of genres.
+              Genre.findByIdAndRemove(req.body.genreid, function deleteGenre(err) {
+                  if (err) { return next(err); }
+                  // Success - go to genre list
+                  res.redirect('/catalog/genres')
+              })
+          }
+      });
 };
 
 // Display genre update form on GET.

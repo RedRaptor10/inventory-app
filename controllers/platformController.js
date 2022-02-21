@@ -89,12 +89,49 @@ exports.platform_create_post = [
 
 // Display platform delete form on GET.
 exports.platform_delete_get = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        platform: function(callback) {
+            Platform.findById(req.params.id).exec(callback)
+        },
+        platform_games: function(callback) {
+            Game.find({ 'platform': req.params.id }).exec(callback)
+        },
+      }, function(err, results) {
+          if (err) { return next(err); }
+          if (results.platform==null) { // No results.
+              res.redirect('/catalog/platforms');
+          }
+          // Successful, so render.
+          res.render('platform_delete', { title: 'Delete Platform', platform: results.platform, platform_games: results.platform_games } );
+      });
 };
 
 // Handle platform delete on POST.
 exports.platform_delete_post = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        platform: function(callback) {
+          Platform.findById(req.body.platformid).exec(callback)
+        },
+        platform_games: function(callback) {
+          Game.find({ 'platform': req.body.platformid }).exec(callback)
+        },
+      }, function(err, results) {
+          if (err) { return next(err); }
+          // Success
+          if (results.platform_games.length > 0) {
+              // Platform has games. Render in same way as for GET route.
+              res.render('platform_delete', { title: 'Delete Platform', platform: results.platform, platform_games: results.platform_games } );
+              return;
+          }
+          else {
+              // Platform has no games. Delete object and redirect to the list of platforms.
+              Platform.findByIdAndRemove(req.body.platformid, function deletePlatform(err) {
+                  if (err) { return next(err); }
+                  // Success - go to platform list
+                  res.redirect('/catalog/platforms')
+              })
+          }
+      });
 };
 
 // Display platform update form on GET.
