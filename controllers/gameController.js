@@ -79,18 +79,129 @@ exports.game_create_get = function(req, res, next) {
 };
 
 // Handle game create on POST.
-exports.game_create_post = function(req, res) {
-    res.send('N/A');
-};
+exports.game_create_post = [
+    // Convert the genre to an array.
+    (req, res, next) => {
+        if(!(req.body.genre instanceof Array)){
+            if(typeof req.body.genre ==='undefined')
+            req.body.genre = [];
+            else
+            req.body.genre = new Array(req.body.genre);
+        }
+        next();
+    },
+    // Convert the platform to an array.
+    (req, res, next) => {
+        if(!(req.body.platform instanceof Array)){
+            if(typeof req.body.platform ==='undefined')
+            req.body.platform = [];
+            else
+            req.body.platform = new Array(req.body.platform);
+        }
+        next();
+    },
+
+    // Validate and sanitize fields.
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('publisher', 'Publisher must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('description', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('genre.*').escape(),
+    body('platform.*').escape(),
+    body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('qty', 'Quantity must not be empty').trim().isLength({ min: 1 }).escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Game object with escaped and trimmed data.
+        var game = new Game(
+          { title: req.body.title,
+            publisher: req.body.publisher,
+            description: req.body.description,
+            genre: req.body.genre,
+            platform: req.body.platform,
+            price: req.body.price,
+            qty: req.body.qty
+           });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all publishers, genres, and platforms for form.
+            async.parallel({
+                authors: function(callback) {
+                    Author.find(callback);
+                },
+                genres: function(callback) {
+                    Genre.find(callback);
+                },
+                platforms: function(callback) {
+                    Platform.find(callback);
+                }
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                // Mark our selected genres as checked.
+                for (let i = 0; i < results.genres.length; i++) {
+                    if (game.genre.indexOf(results.genres[i]._id) > -1) {
+                        results.genres[i].checked='true';
+                    }
+                }
+                // Mark our selected platforms as checked.
+                for (let i = 0; i < results.platforms.length; i++) {
+                    if (game.platform.indexOf(results.platforms[i]._id) > -1) {
+                        results.platforms[i].checked='true';
+                    }
+                }
+                res.render('game_form', { title: 'Create Game', publishers: results.publishers, genres: results.genres, platforms: results.platforms,
+                    game: game, errors: errors.array() });
+            });
+            return;
+        }
+        else {
+            // Data from form is valid. Save game.
+            game.save(function (err) {
+                if (err) { return next(err); }
+                   // Successful - redirect to new game record.
+                   res.redirect(game.url);
+                });
+        }
+    }
+];
 
 // Display game delete form on GET.
 exports.game_delete_get = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        game: function(callback) {
+            Game.findById(req.params.id).exec(callback)
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.game==null) { // No results.
+                res.redirect('/catalog/games');
+            }
+            // Successful, so render.
+            res.render('game_delete', { title: 'Delete Game', game: results.game } );
+        });
 };
 
 // Handle game delete on POST.
 exports.game_delete_post = function(req, res) {
-    res.send('N/A');
+    async.parallel({
+        game: function(callback) {
+          Game.findById(req.body.gameid).exec(callback)
+        },
+      }, function(err, results) {
+          if (err) { return next(err); }
+          // Success. Delete object and redirect to the list of games.
+          Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
+            if (err) { return next(err); }
+            // Success - go to game list
+            res.redirect('/catalog/games')
+          })
+      });
 };
 
 // Display game update form on GET.
