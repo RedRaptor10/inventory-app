@@ -60,8 +60,22 @@ exports.game_details = function(req, res, next) {
 };
 
 // Display game create form on GET.
-exports.game_create_get = function(req, res) {
-    res.send('N/A');
+exports.game_create_get = function(req, res, next) {
+    // Get all publishers, genres, and platforms
+    async.parallel({
+        publishers: function(callback) {
+            Publisher.find(callback);
+        },
+        genres: function(callback) {
+            Genre.find(callback);
+        },
+        platforms: function(callback) {
+            Platform.find(callback);
+        },
+    }, function(err, results) {
+        res.render('game_form', { title: 'Create Game', publishers: results.publishers,
+            genres: results.genres, platforms: results.platforms });
+    });
 };
 
 // Handle game create on POST.

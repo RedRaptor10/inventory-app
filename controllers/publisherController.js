@@ -38,14 +38,44 @@ exports.publisher_details = function(req, res, next) {
 };
 
 // Display publisher create form on GET.
-exports.publisher_create_get = function(req, res) {
-    res.send('N/A');
+exports.publisher_create_get = function(req, res, next) {
+    res.render('publisher_form', { title: 'Create Publisher'});
 };
 
 // Handle publisher create on POST.
-exports.publisher_create_post = function(req, res) {
-    res.send('N/A');
-};
+exports.publisher_create_post = [
+    // Validate and sanitize fields.
+    body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.')
+        .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
+    body('description').trim().isLength({ min: 1 }).escape().withMessage('Description must be specified.'),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/errors messages.
+            res.render('publisher_form', { title: 'Create Publisher', publisher: req.body, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid.
+
+            // Create a Publisher object with escaped and trimmed data.
+            var publisher = new Publisher(
+                {
+                    name: req.body.name,
+                    description: req.body.description
+                });
+            publisher.save(function (err) {
+                if (err) { return next(err); }
+                // Successful - redirect to new publisher record.
+                res.redirect(publisher.url);
+            });
+        }
+    }
+];
 
 // Display publisher delete form on GET.
 exports.publisher_delete_get = function(req, res) {

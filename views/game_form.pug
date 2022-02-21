@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  h1= title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text', placeholder='Game Title' name='title' required='true' value=(undefined===game ? '' : game.title))
+    div.form-group
+      label(for='publisher') Publisher:
+      select#publisher.form-control(type='select' placeholder='Publisher' name='publisher' required='true')
+        - publishers.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for publisher in publishers
+          if game
+            //- Handle GET form, where game.publisher is an object, and POST form, where it is a string.
+            option(
+              value=publisher._id
+              selected=(
+                publisher._id.toString()==game.publisher._id
+                || publisher._id.toString()==game.publisher
+              ) ? 'selected' : false
+            ) #{publisher.name}
+          else
+            option(value=publisher._id) #{publisher.name}
+    div.form-group
+      label(for='description') Description:
+      textarea#description.form-control(type='textarea', placeholder='Description' name='description' required='true') #{undefined===game ? '' : game.description}
+    div.form-group
+      label Genre:
+      div
+        for genre in genres
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id, checked=genre.checked )
+            label(for=genre._id) #{genre.name}
+    div.form-group
+      label Platform:
+      div
+        for platform in platforms
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='platform', id=platform._id, value=platform._id, checked=platform.checked )
+            label(for=platform._id) #{platform.name}
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='text', placeholder='Price' name='price' value=(undefined===game ? '' : game.price) required='true')
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

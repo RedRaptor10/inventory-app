@@ -38,14 +38,54 @@ exports.platform_details = function(req, res) {
 };
 
 // Display platform create form on GET.
-exports.platform_create_get = function(req, res) {
-    res.send('N/A');
+exports.platform_create_get = function(req, res, next) {
+    res.render('platform_form', { title: 'Create Platform' });
 };
 
 // Handle platform create on POST.
-exports.platform_create_post = function(req, res) {
-    res.send('N/A');
-};
+exports.platform_create_post = [
+    // Validate and sanitize the name field.
+    body('name').trim().isLength({ min: 1 }).escape().withMessage('Name is required.')
+        .isLength({ max: 100 }).escape().withMessage('Name cannot be more than 100 characters long.'),
+  
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+      // Extract the validation errors from a request.
+      const errors = validationResult(req);
+  
+      // Create a platform object with escaped and trimmed data.
+      var platform = new Platform(
+        { name: req.body.name }
+      );
+  
+      if (!errors.isEmpty()) {
+        // There are errors. Render the form again with sanitized values/error messages.
+        res.render('platform_form', { title: 'Create Platform', platform: platform, errors: errors.array()});
+        return;
+      }
+      else {
+        // Data from form is valid.
+        // Check if Platform with same name already exists.
+        Platform.findOne({ 'name': req.body.name })
+          .exec( function(err, found_platform) {
+             if (err) { return next(err); }
+  
+             if (found_platform) {
+               // Platform exists, redirect to its detail page.
+               res.redirect(found_platform.url);
+             }
+             else {
+               platform.save(function (err) {
+                 if (err) { return next(err); }
+                 // Platform saved. Redirect to platform detail page.
+                 res.redirect(platform.url);
+               });
+  
+             }
+           });
+      }
+    }
+];
 
 // Display platform delete form on GET.
 exports.platform_delete_get = function(req, res) {
