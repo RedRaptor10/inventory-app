@@ -3,8 +3,8 @@ var Schema = mongoose.Schema;
 
 var PublisherSchema = new Schema(
     {
-        name: {type: String, required: true, minLength: 1, maxLength: 100},
-        description: {type: String, required: true}
+        name: {type: String, minLength: 1, maxLength: 100, required: true},
+        description: {type: String, maxLength: 1000}
     }
 );
 

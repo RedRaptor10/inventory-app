@@ -5,6 +5,19 @@ block content
 
   p #[strong Description:] #{publisher.description}
 
+  div(style='margin-left: 20px; margin-top: 20px')
+
+    h4 Games
+
+    dl
+      each game in publisher_games
+        dt
+          a(href=game.url) #{game.title}
+        dd #{game.description}
+
+      else
+        p No games.
+
   hr
   p
     a(href=publisher.url+'/delete') Delete Publisher

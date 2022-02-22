@@ -104,7 +104,7 @@ exports.game_create_post = [
     // Validate and sanitize fields.
     body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).escape(),
     body('publisher', 'Publisher must not be empty.').trim().isLength({ min: 1 }).escape(),
-    body('description', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('description', 'Description must not be empty.').trim().isLength({ max: 1000 }).escape(),
     body('genre.*').escape(),
     body('platform.*').escape(),
     body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),
@@ -131,8 +131,8 @@ exports.game_create_post = [
 
             // Get all publishers, genres, and platforms for form.
             async.parallel({
-                authors: function(callback) {
-                    Author.find(callback);
+                publishers: function(callback) {
+                    Publisher.find(callback);
                 },
                 genres: function(callback) {
                     Genre.find(callback);
@@ -172,36 +172,36 @@ exports.game_create_post = [
 ];
 
 // Display game delete form on GET.
-exports.game_delete_get = function(req, res) {
+exports.game_delete_get = function(req, res, next) {
     async.parallel({
         game: function(callback) {
             Game.findById(req.params.id).exec(callback)
         },
-        }, function(err, results) {
-            if (err) { return next(err); }
-            if (results.game==null) { // No results.
-                res.redirect('/catalog/games');
-            }
-            // Successful, so render.
-            res.render('game_delete', { title: 'Delete Game', game: results.game } );
-        });
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.game==null) { // No results.
+            res.redirect('/catalog/games');
+        }
+        // Successful, so render.
+        res.render('game_delete', { title: 'Delete Game', game: results.game } );
+    });
 };
 
 // Handle game delete on POST.
-exports.game_delete_post = function(req, res) {
+exports.game_delete_post = function(req, res, next) {
     async.parallel({
         game: function(callback) {
-          Game.findById(req.body.gameid).exec(callback)
+            Game.findById(req.body.gameid).exec(callback)
         },
-      }, function(err, results) {
-          if (err) { return next(err); }
-          // Success. Delete object and redirect to the list of games.
-          Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
-            if (err) { return next(err); }
-            // Success - go to game list
-            res.redirect('/catalog/games')
-          })
-      });
+    }, function(err, results) {
+        if (err) { return next(err); }
+        // Success. Delete object and redirect to the list of games.
+        Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
+        if (err) { return next(err); }
+        // Success - go to game list
+        res.redirect('/catalog/games')
+        })
+    });
 };
 
 // Display game update form on GET.
@@ -275,7 +275,7 @@ exports.game_update_post = [
     // Validate and sanitize fields.
     body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).escape(),
     body('publisher', 'Publisher must not be empty.').trim().isLength({ min: 1 }).escape(),
-    body('description', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('description', 'Description must not be empty.').trim().isLength({ max: 1000 }).escape(),
     body('genre.*').escape(),
     body('platform.*').escape(),
     body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),

@@ -80,7 +80,6 @@ exports.platform_create_post = [
                  // Platform saved. Redirect to platform detail page.
                  res.redirect(platform.url);
                });
-  
              }
            });
       }
@@ -148,7 +147,7 @@ exports.platform_update_get = function(req, res, next) {
                 err.status = 404;
                 return next(err);
             }
-            // Success.
+            // Success
             res.render('platform_form', { title: 'Update Platform', platform: results.platform });
         });
 };
@@ -172,7 +171,7 @@ exports.platform_update_post = [
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
-            res.render('platform_form', { title: 'Update Platform', platform: results.platform, errors: errors.array() });
+            res.render('platform_form', { title: 'Update Platform', platform: platform, errors: errors.array() });
             return;
         }
         else {
@@ -192,7 +191,7 @@ exports.platform_update_post = [
                     // Successful - redirect to platform detail page.
                     res.redirect(theplatform.url);
                     });
-            }
+                }
             });
         }
     }

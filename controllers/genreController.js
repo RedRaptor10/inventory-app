@@ -47,7 +47,7 @@ exports.genre_create_post = [
     // Validate and sanitize the name field.
     body('name').trim().isLength({ min: 3 }).escape().withMessage('Name must be at least 3 characters long.')
         .isLength({ max: 100 }).escape().withMessage('Name cannot be more than 100 characters long.'),
-  
+
     // Process request after validation and sanitization.
     (req, res, next) => {
       // Extract the validation errors from a request.
@@ -80,7 +80,6 @@ exports.genre_create_post = [
                  // Genre saved. Redirect to genre detail page.
                  res.redirect(genre.url);
                });
-  
              }
            });
       }
@@ -148,7 +147,7 @@ exports.genre_update_get = function(req, res, next) {
                 err.status = 404;
                 return next(err);
             }
-            // Success.
+            // Success
             res.render('genre_form', { title: 'Update Genre', genre: results.genre });
         });
 };
@@ -156,7 +155,7 @@ exports.genre_update_get = function(req, res, next) {
 // Handle genre update on POST.
 exports.genre_update_post = [
     // Validate and sanitize fields.
-    body('name', 'Name must not be empty.').trim().isLength({ min: 3 }).escape(),
+    body('name', 'Name must be at least 3 characters long.').trim().isLength({ min: 3 }).escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -172,7 +171,7 @@ exports.genre_update_post = [
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
-            res.render('genre_form', { title: 'Update Genre', genre: results.genre, errors: errors.array() });
+            res.render('genre_form', { title: 'Update Genre', genre: genre, errors: errors.array() });
             return;
         }
         else {
@@ -187,12 +186,12 @@ exports.genre_update_post = [
                 res.redirect(found_genre.url);
                 }
                 else {
-                Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err,thegenre) {
-                    if (err) { return next(err); }
-                    // Successful - redirect to genre detail page.
-                    res.redirect(thegenre.url);
+                    Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err,thegenre) {
+                        if (err) { return next(err); }
+                        // Successful - redirect to genre detail page.
+                        res.redirect(thegenre.url);
                     });
-            }
+                }
             });
         }
     }

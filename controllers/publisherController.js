@@ -46,8 +46,9 @@ exports.publisher_create_get = function(req, res, next) {
 exports.publisher_create_post = [
     // Validate and sanitize fields.
     body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.')
+        .isLength({ max: 100 }).escape().withMessage('Name cannot be more than 100 characters long.')
         .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
-    body('description').trim().isLength({ min: 1 }).escape().withMessage('Description must be specified.'),
+    body('description').trim().isLength({ max: 1000 }).escape().withMessage('Name cannot be more than 1000 characters long.'),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -61,17 +62,28 @@ exports.publisher_create_post = [
         }
         else {
             // Data from form is valid.
-
-            // Create a Publisher object with escaped and trimmed data.
-            var publisher = new Publisher(
-                {
-                    name: req.body.name,
-                    description: req.body.description
-                });
-            publisher.save(function (err) {
+            // Check if Publisher with same name already exists.
+            Publisher.findOne({ 'name': req.body.name })
+            .exec( function(err, found_publisher) {
                 if (err) { return next(err); }
-                // Successful - redirect to new publisher record.
-                res.redirect(publisher.url);
+
+                if (found_publisher) {
+                    // Publisher exists, redirect to its detail page.
+                    res.redirect(found_publisher.url);
+                }
+                else {
+                    // Create a Publisher object with escaped and trimmed data.
+                    var publisher = new Publisher(
+                        {
+                            name: req.body.name,
+                            description: req.body.description
+                        });
+                    publisher.save(function (err) {
+                        if (err) { return next(err); }
+                        // Successful - redirect to new publisher record.
+                        res.redirect(publisher.url);
+                    });
+                }
             });
         }
     }
@@ -148,7 +160,7 @@ exports.publisher_update_post = [
     // Validate and sanitize fields.
     body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.')
         .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
-    body('description').trim().isLength({ min: 1 }).escape().withMessage('Description must be specified.'),
+    body('description').trim().isLength({ max: 1000 }).escape().withMessage('Name cannot be more than 1000 characters long.'),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -164,16 +176,42 @@ exports.publisher_update_post = [
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
-            res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher, errors: errors.array() });
-            return;
+            // Get publisher for form.
+            async.parallel({
+                publisher: function(callback) {
+                    Publisher.findById(req.params.id).exec(callback);
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+                if (results.publisher==null) { // No results.
+                    var err = new Error('Publisher not found');
+                    err.status = 404;
+                    return next(err);
+                }
+                // Success.
+                res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher, errors: errors.array() });
+                return;
+            });
         }
         else {
             // Data from form is valid. Update the record.
-            Publisher.findByIdAndUpdate(req.params.id, publisher, {}, function (err, thepublisher) {
+            // Check if Publisher with same name already exists.
+            Publisher.findOne({ 'name': req.body.name })
+            .exec( function(err, found_publisher) {
                 if (err) { return next(err); }
-                   // Successful - redirect to publisher detail page.
-                   res.redirect(thepublisher.url);
-                });
+
+                if (found_publisher) {
+                    // Publisher exists, redirect to its detail page.
+                    res.redirect(found_publisher.url);
+                }
+                else {
+                    Publisher.findByIdAndUpdate(req.params.id, publisher, {}, function (err, thepublisher) {
+                        if (err) { return next(err); }
+                        // Successful - redirect to publisher detail page.
+                        res.redirect(thepublisher.url);
+                    });
+                }
+            });
         }
     }
 ];

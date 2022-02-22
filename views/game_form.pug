@@ -25,7 +25,7 @@ block content
             option(value=publisher._id) #{publisher.name}
     div.form-group
       label(for='description') Description:
-      textarea#description.form-control(type='textarea' placeholder='Description' name='description' required='true') #{undefined===game ? '' : game.description}
+      textarea#description.form-control(type='textarea' placeholder='Description' name='description') #{undefined===game ? '' : game.description}
     div.form-group
       label Genre:
       div
@@ -42,7 +42,7 @@ block content
             label(for=platform._id) #{platform.name}
     div.form-group
       label(for='price') Price:
-      input#price.form-control(type='number' min='0' placeholder='Price' name='price' value=(undefined===game ? '' : game.price.toString()) required='true')
+      input#price.form-control(type='number' min='0' step='0.01' placeholder='Price' name='price' value=(undefined===game ? '' : game.price.toString()) required='true')
       label(for='qty') Quantity:
       input#qty.form-control(type='number' min='0' placeholder='Quantity' name='qty' value=(undefined===game ? '' : game.qty) required='true')
     button.btn.btn-primary(type='submit') Submit
