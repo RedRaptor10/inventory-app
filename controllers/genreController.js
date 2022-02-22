@@ -135,11 +135,65 @@ exports.genre_delete_post = function(req, res) {
 };
 
 // Display genre update form on GET.
-exports.genre_update_get = function(req, res) {
-    res.send('N/A');
+exports.genre_update_get = function(req, res, next) {
+    // Get genre for form.
+    async.parallel({
+        genre: function(callback) {
+            Genre.findById(req.params.id).exec(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.genre==null) { // No results.
+                var err = new Error('Genre not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+            res.render('genre_form', { title: 'Update Genre', genre: results.genre });
+        });
 };
 
 // Handle genre update on POST.
-exports.genre_update_post = function(req, res) {
-    res.send('N/A');
-};
+exports.genre_update_post = [
+    // Validate and sanitize fields.
+    body('name', 'Name must not be empty.').trim().isLength({ min: 3 }).escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Genre object with escaped/trimmed data and old id.
+        var genre = new Genre(
+        {
+            name: req.body.name,
+            _id:req.params.id // This is required, or a new ID will be assigned
+        });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+            res.render('genre_form', { title: 'Update Genre', genre: results.genre, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            // Check if Genre with same name already exists.
+            Genre.findOne({ 'name': req.body.name })
+            .exec( function(err, found_genre) {
+                if (err) { return next(err); }
+
+                if (found_genre) {
+                // Genre exists, redirect to its detail page.
+                res.redirect(found_genre.url);
+                }
+                else {
+                Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err,thegenre) {
+                    if (err) { return next(err); }
+                    // Successful - redirect to genre detail page.
+                    res.redirect(thegenre.url);
+                    });
+            }
+            });
+        }
+    }
+];

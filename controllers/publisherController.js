@@ -125,11 +125,55 @@ exports.publisher_delete_post = function(req, res, next) {
 };
 
 // Display publisher update form on GET.
-exports.publisher_update_get = function(req, res) {
-    res.send('N/A');
+exports.publisher_update_get = function(req, res, next) {
+    // Get publisher for form.
+    async.parallel({
+        publisher: function(callback) {
+            Publisher.findById(req.params.id).exec(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.publisher==null) { // No results.
+                var err = new Error('Publisher not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+            res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher });
+        });
 };
 
 // Handle publisher update on POST.
-exports.publisher_update_post = function(req, res) {
-    res.send('N/A');
-};
+exports.publisher_update_post = [
+    // Validate and sanitize fields.
+    body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.')
+        .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
+    body('description').trim().isLength({ min: 1 }).escape().withMessage('Description must be specified.'),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Publisher object with escaped/trimmed data and old id.
+        var publisher = new Publisher(
+          { name: req.body.name,
+            description: req.body.description,
+            _id: req.params.id // This is required, or a new ID will be assigned
+           });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+            res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Publisher.findByIdAndUpdate(req.params.id, publisher, {}, function (err, thepublisher) {
+                if (err) { return next(err); }
+                   // Successful - redirect to publisher detail page.
+                   res.redirect(thepublisher.url);
+                });
+        }
+    }
+];

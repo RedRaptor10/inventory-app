@@ -135,11 +135,65 @@ exports.platform_delete_post = function(req, res) {
 };
 
 // Display platform update form on GET.
-exports.platform_update_get = function(req, res) {
-    res.send('N/A');
+exports.platform_update_get = function(req, res, next) {
+    // Get platform for form.
+    async.parallel({
+        platform: function(callback) {
+            Platform.findById(req.params.id).exec(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.platform==null) { // No results.
+                var err = new Error('Platform not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+            res.render('platform_form', { title: 'Update Platform', platform: results.platform });
+        });
 };
 
 // Handle platform update on POST.
-exports.platform_update_post = function(req, res) {
-    res.send('N/A');
-};
+exports.platform_update_post = [
+    // Validate and sanitize fields.
+    body('name', 'Name must not be empty.').trim().isLength({ min: 3 }).escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Platform object with escaped/trimmed data and old id.
+        var platform = new Platform(
+        {
+            name: req.body.name,
+            _id:req.params.id // This is required, or a new ID will be assigned
+        });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+            res.render('platform_form', { title: 'Update Platform', platform: results.platform, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            // Check if Platform with same name already exists.
+            Platform.findOne({ 'name': req.body.name })
+            .exec( function(err, found_platform) {
+                if (err) { return next(err); }
+
+                if (found_platform) {
+                // Platform exists, redirect to its detail page.
+                res.redirect(found_platform.url);
+                }
+                else {
+                Platform.findByIdAndUpdate(req.params.id, platform, {}, function (err,theplatform) {
+                    if (err) { return next(err); }
+                    // Successful - redirect to platform detail page.
+                    res.redirect(theplatform.url);
+                    });
+            }
+            });
+        }
+    }
+];
