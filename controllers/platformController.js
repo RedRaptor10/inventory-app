@@ -156,7 +156,7 @@ exports.platform_update_get = function(req, res, next) {
 // Handle platform update on POST.
 exports.platform_update_post = [
     // Validate and sanitize fields.
-    body('name', 'Name must not be empty.').trim().isLength({ min: 3 }).escape(),
+    body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
