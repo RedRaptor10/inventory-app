@@ -8,7 +8,7 @@ block content
       label(for='name') Name:
       input#name.form-control(type='text' placeholder='Name' name='name' required='true' value=(undefined===publisher ? '' : publisher.name))
       label(for='description') Description:
-      textarea#description.form-control(type='textarea' placeholder='Description' name='description' required='true' value=(undefined===publisher ? '' : publisher.description))
+      textarea#description.form-control(type='textarea' placeholder='Description' name='description' required='true') #{undefined===publisher ? '' : publisher.description}
     button.btn.btn-primary(type='submit') Submit
   if errors
     ul
