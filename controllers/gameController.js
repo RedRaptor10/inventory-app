@@ -393,7 +393,9 @@ exports.game_update_post = [
                 },
             }, function(err, results) {
                 if (err) { return next(err); }
-                prevPosterId = results.game.posterId;
+                if (results.game.posterId) {
+                    prevPosterId = results.game.posterId;
+                }
             });
 
             // Data from form is valid. Update the record.
@@ -401,9 +403,11 @@ exports.game_update_post = [
                 if (err) { return next(err); }
 
                 // Delete previous game poster
-                fs.unlink('public/uploads/' + prevPosterId, (err) => {
-                    if (err) { return console.log(err); }
-                });
+                if (prevPosterId != '') {
+                    fs.unlink('public/uploads/' + prevPosterId, (err) => {
+                        if (err) { return console.log(err); }
+                    });
+                }
 
                 // Successful - redirect to game detail page.
                 res.redirect(thegame.url);
