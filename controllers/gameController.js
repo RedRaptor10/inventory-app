@@ -2,6 +2,7 @@ var Game = require('../models/game');
 var Publisher = require('../models/publisher');
 var Genre = require('../models/genre');
 var Platform = require('../models/platform');
+var uploads = '../uploads/';
 var async = require('async');
 const { body, validationResult } = require('express-validator');
 
@@ -123,7 +124,8 @@ exports.game_create_post = [
             genre: req.body.genre,
             platform: req.body.platform,
             price: req.body.price,
-            qty: req.body.qty
+            qty: req.body.qty,
+            posterId: req.file.filename
            });
 
         if (!errors.isEmpty()) {

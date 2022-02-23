@@ -3,7 +3,7 @@ extends layout
 block content
   h1= title
 
-  form(method='POST' action='')
+  form(method='POST' action='' enctype='multipart/form-data')
     div.form-group
       label(for='title') Title:
       input#title.form-control(type='text' placeholder='Game Title' name='title' required='true' value=(undefined===game ? '' : game.title))
@@ -45,6 +45,9 @@ block content
       input#price.form-control(type='number' min='0' step='0.01' placeholder='Price' name='price' value=(undefined===game ? '' : game.price.toString()) required='true')
       label(for='qty') Quantity:
       input#qty.form-control(type='number' min='0' placeholder='Quantity' name='qty' value=(undefined===game ? '' : game.qty) required='true')
+    div.form-group
+      label(for='poster') Poster:
+      input#poster.form-control(type='file' name='poster')
     button.btn.btn-primary(type='submit') Submit
 
   if errors

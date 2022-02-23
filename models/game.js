@@ -9,7 +9,8 @@ var GameSchema = new Schema(
         genre: [{type: Schema.Types.ObjectId, ref: 'Genre', required: true}],
         platform: [{type: Schema.Types.ObjectId, ref: 'Platform', required: true}],
         price: {type: Schema.Types.Decimal128, required: true},
-        qty: {type: Number, required: true}
+        qty: {type: Number, required: true},
+        posterId: {type: String}
     }
 );
 

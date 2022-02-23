@@ -3,6 +3,9 @@ extends layout
 block content
   h1 #{title}
 
+  if game.posterId
+    img(src='/uploads/' + game.posterId)
+
   p #[strong Publisher:] 
     a(href=game.publisher.url) #{game.publisher.name}
   p #[strong Description:] #{game.description}

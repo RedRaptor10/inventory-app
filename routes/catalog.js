@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'public/uploads/' });
 
 // Require controller modules.
 var game_controller = require('../controllers/gameController');
@@ -16,7 +18,7 @@ router.get('/', game_controller.index);
 router.get('/game/create', game_controller.game_create_get);
 
 // POST request for creating Game.
-router.post('/game/create', game_controller.game_create_post);
+router.post('/game/create', upload.single('poster'), game_controller.game_create_post);
 
 // GET request to delete Game.
 router.get('/game/:id/delete', game_controller.game_delete_get);
