@@ -201,6 +201,12 @@ exports.game_delete_post = function(req, res, next) {
         // Success. Delete object and redirect to the list of games.
         Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
         if (err) { return next(err); }
+
+        // Delete game poster
+        fs.unlink('public/uploads/' + results.game.posterId, (err) => {
+            if (err) { return console.log(err); }
+        });
+
         // Success - go to game list
         res.redirect('/catalog/games')
         })
@@ -351,14 +357,15 @@ exports.game_update_post = [
             // Data from form is valid. Update the record.
             Game.findByIdAndUpdate(req.params.id, game, {}, function (err,thegame) {
                 if (err) { return next(err); }
-                   // Successful - redirect to game detail page.
-                   res.redirect(thegame.url);
 
-                   // Delete previous game poster
-                   fs.unlink('public/uploads/' + prevPosterId, (err) => {
-                       if (err) { return console.log(err); }
-                   });
+                // Delete previous game poster
+                fs.unlink('public/uploads/' + prevPosterId, (err) => {
+                    if (err) { return console.log(err); }
                 });
+
+                // Successful - redirect to game detail page.
+                res.redirect(thegame.url);
+            });
         }
     }
 ];
