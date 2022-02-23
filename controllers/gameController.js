@@ -2,7 +2,6 @@ var Game = require('../models/game');
 var Publisher = require('../models/publisher');
 var Genre = require('../models/genre');
 var Platform = require('../models/platform');
-var uploads = '../uploads/';
 var async = require('async');
 var fs = require('fs');
 const { body, validationResult } = require('express-validator');
@@ -125,9 +124,11 @@ exports.game_create_post = [
             genre: req.body.genre,
             platform: req.body.platform,
             price: req.body.price,
-            qty: req.body.qty,
-            posterId: req.file.filename
+            qty: req.body.qty
            });
+
+        // If file upload, add poster ID
+        if (req.file) { game.posterId = req.file.filename; }
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
@@ -304,9 +305,11 @@ exports.game_update_post = [
             platform: (typeof req.body.platform==='undefined') ? [] : req.body.platform,
             price: req.body.price,
             qty: req.body.qty,
-            posterId: req.file.filename,
             _id:req.params.id // This is required, or a new ID will be assigned
            });
+
+        // If file upload, add poster ID
+        if (req.file) { game.posterId = req.file.filename; }
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
