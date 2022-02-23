@@ -2,7 +2,7 @@ extends layout
 
 block content
   h1= title
-  if game.posterId
+  if game && game.posterId
         div(class='poster-current-uploaded')
           img(src='/uploads/' + game.posterId)
 
