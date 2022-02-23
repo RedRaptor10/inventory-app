@@ -30,7 +30,7 @@ router.post('/game/:id/delete', game_controller.game_delete_post);
 router.get('/game/:id/update', game_controller.game_update_get);
 
 // POST request to update Game.
-router.post('/game/:id/update', game_controller.game_update_post);
+router.post('/game/:id/update', upload.single('poster'), game_controller.game_update_post);
 
 // GET request for one Game.
 router.get('/game/:id', game_controller.game_details);

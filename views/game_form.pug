@@ -2,6 +2,9 @@ extends layout
 
 block content
   h1= title
+  if game.posterId
+        div(class='poster-current-uploaded')
+          img(src='/uploads/' + game.posterId)
 
   form(method='POST' action='' enctype='multipart/form-data')
     div.form-group

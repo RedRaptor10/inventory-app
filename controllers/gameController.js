@@ -4,6 +4,7 @@ var Genre = require('../models/genre');
 var Platform = require('../models/platform');
 var uploads = '../uploads/';
 var async = require('async');
+var fs = require('fs');
 const { body, validationResult } = require('express-validator');
 
 // Home Page
@@ -297,6 +298,7 @@ exports.game_update_post = [
             platform: (typeof req.body.platform==='undefined') ? [] : req.body.platform,
             price: req.body.price,
             qty: req.body.qty,
+            posterId: req.file.filename,
             _id:req.params.id // This is required, or a new ID will be assigned
            });
 
@@ -335,11 +337,27 @@ exports.game_update_post = [
             return;
         }
         else {
+            // Get previous game poster id
+            var prevPosterId = '';
+            async.parallel({
+                game: function(callback) {
+                    Game.findById(req.params.id).exec(callback)
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+                prevPosterId = results.game.posterId;
+            });
+
             // Data from form is valid. Update the record.
             Game.findByIdAndUpdate(req.params.id, game, {}, function (err,thegame) {
                 if (err) { return next(err); }
                    // Successful - redirect to game detail page.
                    res.redirect(thegame.url);
+
+                   // Delete previous game poster
+                   fs.unlink('public/uploads/' + prevPosterId, (err) => {
+                       if (err) { return console.log(err); }
+                   });
                 });
         }
     }
