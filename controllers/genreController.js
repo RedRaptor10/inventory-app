@@ -1,7 +1,9 @@
+var Admin = require('../models/admin');
 var Genre = require('../models/genre');
 var Game = require('../models/game');
 var async = require('async');
 const { body, validationResult } = require('express-validator');
+const password = Admin.password;
 
 // Display list of all genres.
 exports.genre_list = function(req, res, next) {
@@ -106,32 +108,66 @@ exports.genre_delete_get = function(req, res) {
 };
 
 // Handle genre delete on POST.
-exports.genre_delete_post = function(req, res) {
-    async.parallel({
-        genre: function(callback) {
-          Genre.findById(req.body.genreid).exec(callback)
-        },
-        genre_games: function(callback) {
-          Game.find({ 'genre': req.body.genreid }).exec(callback)
-        },
-      }, function(err, results) {
-          if (err) { return next(err); }
-          // Success
-          if (results.genre_games.length > 0) {
-              // Genre has games. Render in same way as for GET route.
-              res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_games: results.genre_games } );
-              return;
-          }
-          else {
-              // Genre has no games. Delete object and redirect to the list of genres.
-              Genre.findByIdAndRemove(req.body.genreid, function deleteGenre(err) {
+exports.genre_delete_post = [
+    // Validate password
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
+
+    (req, res) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            async.parallel({
+                genre: function(callback) {
+                    Genre.findById(req.params.id).exec(callback)
+                },
+                genre_games: function(callback) {
+                    Game.find({ 'genre': req.params.id }).exec(callback)
+                },
+              }, function(err, results) {
                   if (err) { return next(err); }
-                  // Success - go to genre list
-                  res.redirect('/catalog/genres')
-              })
-          }
-      });
-};
+                  if (results.genre==null) { // No results.
+                      res.redirect('/catalog/genres');
+                  }
+                  // Successful, so render.
+                  res.render('genre_delete', { title: 'Delete Genre', genre: results.genre,
+                    genre_games: results.genre_games, errors: errors.array() } );
+              });
+        } else {
+            async.parallel({
+                genre: function(callback) {
+                Genre.findById(req.body.genreid).exec(callback)
+                },
+                genre_games: function(callback) {
+                Game.find({ 'genre': req.body.genreid }).exec(callback)
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+                // Success
+                if (results.genre_games.length > 0) {
+                    // Genre has games. Render in same way as for GET route.
+                    res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_games: results.genre_games } );
+                    return;
+                }
+                else {
+                    // Genre has no games. Delete object and redirect to the list of genres.
+                    Genre.findByIdAndRemove(req.body.genreid, function deleteGenre(err) {
+                        if (err) { return next(err); }
+                        // Success - go to genre list
+                        res.redirect('/catalog/genres')
+                    })
+                }
+            });
+        }
+    }
+];
 
 // Display genre update form on GET.
 exports.genre_update_get = function(req, res, next) {
@@ -156,6 +192,12 @@ exports.genre_update_get = function(req, res, next) {
 exports.genre_update_post = [
     // Validate and sanitize fields.
     body('name', 'Name must be at least 3 characters long.').trim().isLength({ min: 3 }).escape(),
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
 
     // Process request after validation and sanitization.
     (req, res, next) => {

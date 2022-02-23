@@ -1,3 +1,4 @@
+var Admin = require('../models/admin');
 var Game = require('../models/game');
 var Publisher = require('../models/publisher');
 var Genre = require('../models/genre');
@@ -5,6 +6,7 @@ var Platform = require('../models/platform');
 var async = require('async');
 var fs = require('fs');
 const { body, validationResult } = require('express-validator');
+const password = Admin.password;
 
 // Home Page
 exports.index = function(req, res) {
@@ -192,27 +194,58 @@ exports.game_delete_get = function(req, res, next) {
 };
 
 // Handle game delete on POST.
-exports.game_delete_post = function(req, res, next) {
-    async.parallel({
-        game: function(callback) {
-            Game.findById(req.body.gameid).exec(callback)
-        },
-    }, function(err, results) {
-        if (err) { return next(err); }
-        // Success. Delete object and redirect to the list of games.
-        Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
-        if (err) { return next(err); }
+exports.game_delete_post = [
+    // Validate password
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
 
-        // Delete game poster
-        fs.unlink('public/uploads/' + results.game.posterId, (err) => {
-            if (err) { return console.log(err); }
-        });
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
 
-        // Success - go to game list
-        res.redirect('/catalog/games')
-        })
-    });
-};
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            async.parallel({
+                game: function(callback) {
+                    Game.findById(req.params.id).exec(callback)
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+                if (results.game==null) { // No results.
+                    res.redirect('/catalog/games');
+                }
+                // Successful, so render.
+                res.render('game_delete', { title: 'Delete Game', game: results.game, errors: errors.array() } );
+            });
+        } else {
+            async.parallel({
+                game: function(callback) {
+                    Game.findById(req.body.gameid).exec(callback)
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                // Success. Delete object and redirect to the list of games.
+                Game.findByIdAndRemove(req.body.gameid, function deleteGame(err) {
+                    if (err) { return next(err); }
+
+                    // Delete game poster
+                    fs.unlink('public/uploads/' + results.game.posterId, (err) => {
+                        if (err) { return console.log(err); }
+                    });
+
+                    // Success - go to game list
+                    res.redirect('/catalog/games')
+                })
+            });
+        }
+    }
+];
 
 // Display game update form on GET.
 exports.game_update_get = function(req, res, next) {
@@ -290,6 +323,12 @@ exports.game_update_post = [
     body('platform.*').escape(),
     body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),
     body('qty', 'Quantity must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
 
     // Process request after validation and sanitization.
     (req, res, next) => {

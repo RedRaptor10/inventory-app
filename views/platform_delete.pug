@@ -23,5 +23,13 @@ block content
     form(method='POST' action='')
       div.form-group
         input#platformid.form-control(type='hidden',name='platformid', required='true', value=platform._id )
+      div.form-group
+        label(for='admin-password') Admin Password:
+        input#admin-password.form-control(type='password' name='admin-password' required)
+
+      if errors
+        ul
+          for error in errors
+            li!= error.msg
 
       button.btn.btn-primary(type='submit') Delete

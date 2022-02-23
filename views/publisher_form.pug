@@ -9,6 +9,11 @@ block content
       input#name.form-control(type='text' placeholder='Name' name='name' required='true' value=(undefined===publisher ? '' : publisher.name))
       label(for='description') Description:
       textarea#description.form-control(type='textarea' placeholder='Description' name='description') #{undefined===publisher ? '' : publisher.description}
+    if publisher
+      div.form-group
+          label(for='admin-password') Admin Password:
+          input#admin-password.form-control(type='password' name='admin-password' required)
+
     if errors
       ul
         for error in errors

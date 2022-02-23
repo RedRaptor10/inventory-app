@@ -7,6 +7,11 @@ block content
     div.form-group
       label(for='name') Name:
       input#name.form-control(type='text', placeholder='Action, Fighting, First-person Shooter, etc.' name='name' value=(undefined===genre ? '' : genre.name) required)
+    if genre
+      div.form-group
+          label(for='admin-password') Admin Password:
+          input#admin-password.form-control(type='password' name='admin-password' required)
+
     if errors
       ul
         for error in errors

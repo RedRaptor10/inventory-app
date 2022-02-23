@@ -1,7 +1,9 @@
+var Admin = require('../models/admin');
 var Platform = require('../models/platform');
 var Game = require('../models/game');
 var async = require('async');
 const { body, validationResult } = require('express-validator');
+password = Admin.password;
 
 // Display list of all platforms.
 exports.platform_list = function(req, res) {
@@ -106,32 +108,66 @@ exports.platform_delete_get = function(req, res) {
 };
 
 // Handle platform delete on POST.
-exports.platform_delete_post = function(req, res) {
-    async.parallel({
-        platform: function(callback) {
-          Platform.findById(req.body.platformid).exec(callback)
-        },
-        platform_games: function(callback) {
-          Game.find({ 'platform': req.body.platformid }).exec(callback)
-        },
-      }, function(err, results) {
-          if (err) { return next(err); }
-          // Success
-          if (results.platform_games.length > 0) {
-              // Platform has games. Render in same way as for GET route.
-              res.render('platform_delete', { title: 'Delete Platform', platform: results.platform, platform_games: results.platform_games } );
-              return;
-          }
-          else {
-              // Platform has no games. Delete object and redirect to the list of platforms.
-              Platform.findByIdAndRemove(req.body.platformid, function deletePlatform(err) {
+exports.platform_delete_post = [
+    // Validate password
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
+
+    (req, res) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            async.parallel({
+                platform: function(callback) {
+                    Platform.findById(req.params.id).exec(callback)
+                },
+                platform_games: function(callback) {
+                    Game.find({ 'platform': req.params.id }).exec(callback)
+                },
+              }, function(err, results) {
                   if (err) { return next(err); }
-                  // Success - go to platform list
-                  res.redirect('/catalog/platforms')
-              })
-          }
-      });
-};
+                  if (results.platform==null) { // No results.
+                      res.redirect('/catalog/platforms');
+                  }
+                  // Successful, so render.
+                  res.render('platform_delete', { title: 'Delete Platform', platform: results.platform,
+                    platform_games: results.platform_games, errors: errors.array() } );
+              });
+        } else {
+            async.parallel({
+                platform: function(callback) {
+                Platform.findById(req.body.platformid).exec(callback)
+                },
+                platform_games: function(callback) {
+                Game.find({ 'platform': req.body.platformid }).exec(callback)
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+                // Success
+                if (results.platform_games.length > 0) {
+                    // Platform has games. Render in same way as for GET route.
+                    res.render('platform_delete', { title: 'Delete Platform', platform: results.platform, platform_games: results.platform_games } );
+                    return;
+                }
+                else {
+                    // Platform has no games. Delete object and redirect to the list of platforms.
+                    Platform.findByIdAndRemove(req.body.platformid, function deletePlatform(err) {
+                        if (err) { return next(err); }
+                        // Success - go to platform list
+                        res.redirect('/catalog/platforms')
+                    })
+                }
+            });
+        }
+    }
+];
 
 // Display platform update form on GET.
 exports.platform_update_get = function(req, res, next) {
@@ -156,6 +192,12 @@ exports.platform_update_get = function(req, res, next) {
 exports.platform_update_post = [
     // Validate and sanitize fields.
     body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('admin-password').custom((value) => {
+        if (value !== password) {
+            throw new Error('Wrong password.');
+        }
+        return true;
+    }),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
