@@ -3,13 +3,21 @@ extends layout
 block content
   h1= title
 
-  ul
+  div(class='game-list')
     each game in game_list
-      li
-        |  Title: 
-        a(href=game.url) #{game.title}
-        |  Publisher: 
-        a(href=game.publisher.url) #{game.publisher.name}
+      div(class='game')
+        a(href=game.url)
+          div(class='game-poster-container')
+            if game.posterId
+              img(class='game-poster' src='/uploads/' + game.posterId alt=game.title)
+            else
+              div(class='game-poster-empty')
+                span #{game.title}
+        div(class='game-info')
+            div(class='game-info-title')
+              a(href=game.url) #{game.title}
+            div(class='game-info-publisher')
+              a(href=game.publisher.url) #{game.publisher.name}
 
     else
-      li Empty
+      span No games

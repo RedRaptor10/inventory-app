@@ -1,8 +1,242 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* End Reset */
+
+body {
+  background: rgb(24, 24, 24);
+  color: rgb(224, 224, 224);
+  font-family: 'Helvetica', 'Trebuchet MS', 'Arial', 'sans-serif';
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font: revert;
+}
+
+i, em {
+  font-style: italic;
 }
 
 a {
-  color: #00B7FF;
+  color: rgb(224, 224, 224);
+  text-decoration: none;
+}
+
+a:hover {
+  color: #fff;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+header {
+  display: flex;
+  background: rgb(0, 64, 128);
+  padding: 32px;
+  cursor: default;
+}
+
+.header-title {
+  width: 242px;
+}
+
+.header-title a {
+  color: #fff;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% / 3);
+  margin-left: calc((100% / 3) - 242px);
+}
+
+.navbar-menu {
+  display: flex;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.navbar-menu li {
+  margin: 0 12px 0 12px;
+}
+
+main {
+  width: 75%;
+  height: 90vh;
+  margin: 0 auto 0 auto;
+  padding: 32px;
+}
+
+.btn {
+  background: rgb(0, 64, 128);
+}
+
+/* Home */
+.home-section {
+  display: flex;
+}
+
+.site-stats-container {
+  width: 25%;
+  margin-right: 32px;
+}
+
+.site-stats {
+  background: rgb(16, 16, 16);
+  margin-top: 16px;
+  padding: 24px;
+}
+
+.site-stats-list li {
+  font-size: 20px;
+}
+
+.site-stats-list li:not(:last-child) {
+  margin-bottom: 12px;
+}
+
+.site-stats-list span {
+  font-weight: bold;
+}
+
+.featured-container {
+  width: 75%;
+}
+
+.featured, .game-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.game {
+  margin: 0 16px 16px 0;
+}
+
+.game-poster-container {
+  width: 200px;
+  height: 250px;
+}
+
+.game-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-poster-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(16, 16, 16);
+  width: 100%;
+  height: 100%;
+}
+
+.game-info {
+  background: rgb(0, 64, 128);
+  padding: 8px;
+  text-align: center;
+}
+
+.game-info-title {
+  margin-bottom: 9px;
+  font-size: 20px;
+}
+
+.game-info-publisher {
+  font-size: 14px;
+}
+
+.view-all-games-btn {
+  padding: 8px 12px 8px 12px;
+  font-size: 16px;
+}
+
+.create-btns-section {
+  display: flex;
+  justify-content: center;
+  padding: 64px 0 64px 0;
+}
+
+.create-btn {
+  margin-right: 32px;
+  padding: 8px 12px 8px 12px;
+  font-size: 24px;
+}
+
+/* Lists */
+.list {
+  background: rgb(16, 16, 16);
+  margin-top: 16px;
+  padding: 24px;
+  width: 25%;
+  font-size: 20px;
+}
+
+.list li:not(:last-child) {
+  margin-bottom: 12px;
+}
+
+/* Footer */
+footer {
+  background: rgb(0, 64, 128);
+  padding: 24px;
+  text-align: center;
+}
+
+footer a {
+  text-decoration: underline;
 }

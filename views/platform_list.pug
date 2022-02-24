@@ -3,10 +3,10 @@ extends layout
 block content
   h1= title
 
-  ul
+  ul(class='list')
     each platform in platform_list
       li
         a(href=platform.url) #{platform.name}
 
     else
-      li Empty
+      span No platforms
