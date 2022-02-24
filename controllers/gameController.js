@@ -1,4 +1,5 @@
 var Admin = require('../models/admin');
+var Defaults = require('../models/defaults');
 var Game = require('../models/game');
 var Publisher = require('../models/publisher');
 var Genre = require('../models/genre');
@@ -190,6 +191,12 @@ exports.game_delete_get = function(req, res, next) {
         if (results.game == null) { // No results.
             res.redirect('/catalog/games');
         }
+        // If game exists in default games list, prevent modification
+        if (Defaults.find(key => key.id == results.game._id)) {
+            var err = new Error('This game cannot be modified');
+            return next(err);
+        }
+
         res.render('game_delete', { title: 'Delete Game', game: results.game } );
     });
 };
@@ -267,6 +274,12 @@ exports.game_update_get = function(req, res, next) {
         if (results.game == null) { // No results.
             var err = new Error('Game not found');
             err.status = 404;
+            return next(err);
+        }
+
+        // If game exists in default games list, prevent modification
+        if (Defaults.find(key => key.id == results.game._id)) {
+            var err = new Error('This game cannot be modified');
             return next(err);
         }
 
