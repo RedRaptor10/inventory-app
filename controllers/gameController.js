@@ -25,7 +25,10 @@ exports.index = function(req, res) {
             Platform.countDocuments({}, callback);
         },
         featured_games: function(callback) {
-            Game.find().limit(4).exec(callback);
+            Game.find({}, 'title publisher posterId')
+            .limit(4)
+            .populate('publisher')
+            .exec(callback);
         },
     }, function(err, results) {
         res.render('index', { title: 'Home', error: err, data: results, featured_games: results.featured_games });
@@ -34,12 +37,12 @@ exports.index = function(req, res) {
 
 // Display list of all games.
 exports.game_list = function(req, res, next) {
-    Game.find({}, 'title publisher')
+    Game.find({}, 'title publisher posterId')
     .sort({title: 1})
     .populate('publisher')
     .exec(function (err, list_games) {
         if (err) { return next(err); }
-        res.render('game_list', { title: 'Game List', game_list: list_games });
+        res.render('game_list', { title: 'Games', game_list: list_games });
     });
 };
 
