@@ -28,8 +28,8 @@ exports.publisher_details = function(req, res, next) {
             .exec(callback)
         },
     }, function(err, results) {
-        if (err) { return next(err); } // Error
-        if (results.publisher==null) { // No results
+        if (err) { return next(err); }
+        if (results.publisher == null) { // No results
             var err = new Error('Publisher not found');
             err.status = 404;
             return next(err);
@@ -65,8 +65,7 @@ exports.publisher_create_post = [
         else {
             // Data from form is valid.
             // Check if Publisher with same name already exists.
-            Publisher.findOne({ 'name': req.body.name })
-            .exec( function(err, found_publisher) {
+            Publisher.findOne({ 'name': req.body.name }).exec( function(err, found_publisher) {
                 if (err) { return next(err); }
 
                 if (found_publisher) {
@@ -75,14 +74,14 @@ exports.publisher_create_post = [
                 }
                 else {
                     // Create a Publisher object with escaped and trimmed data.
-                    var publisher = new Publisher(
-                        {
-                            name: req.body.name,
-                            description: req.body.description
-                        });
+                    var publisher = new Publisher({
+                        name: req.body.name,
+                        description: req.body.description
+                    });
+
                     publisher.save(function (err) {
                         if (err) { return next(err); }
-                        // Successful - redirect to new publisher record.
+                        // Success. Redirect to new publisher record.
                         res.redirect(publisher.url);
                     });
                 }
@@ -102,7 +101,7 @@ exports.publisher_delete_get = function(req, res, next) {
         },
     }, function(err, results) {
         if (err) { return next(err); }
-        if (results.publisher==null) { // No results.
+        if (results.publisher == null) { // No results.
             res.redirect('/catalog/publishers');
         }
         // Successful, so render.
@@ -136,7 +135,7 @@ exports.publisher_delete_post = [
                 },
             }, function(err, results) {
                 if (err) { return next(err); }
-                if (results.publisher==null) { // No results.
+                if (results.publisher == null) { // No results.
                     res.redirect('/catalog/publishers');
                 }
                 // Successful, so render.
@@ -146,14 +145,14 @@ exports.publisher_delete_post = [
         } else {
             async.parallel({
                 publisher: function(callback) {
-                Publisher.findById(req.body.publisherid).exec(callback)
+                    Publisher.findById(req.body.publisherid).exec(callback)
                 },
                 publisher_games: function(callback) {
-                Game.find({ 'publisher': req.body.publisherid }).exec(callback)
+                    Game.find({ 'publisher': req.body.publisherid }).exec(callback)
                 },
             }, function(err, results) {
                 if (err) { return next(err); }
-                // Success
+
                 if (results.publisher_games.length > 0) {
                     // Publisher has games. Render in same way as for GET route.
                     res.render('publisher_delete', { title: 'Delete Publisher', publisher: results.publisher, publisher_games: results.publisher_games } );
@@ -163,7 +162,7 @@ exports.publisher_delete_post = [
                     // Publisher has no games. Delete object and redirect to the list of publishers.
                     Publisher.findByIdAndRemove(req.body.publisherid, function deletePublisher(err) {
                         if (err) { return next(err); }
-                        // Success - go to publisher list
+                        // Success. Go to publisher list
                         res.redirect('/catalog/publishers')
                     })
                 }
@@ -179,16 +178,16 @@ exports.publisher_update_get = function(req, res, next) {
         publisher: function(callback) {
             Publisher.findById(req.params.id).exec(callback);
         },
-        }, function(err, results) {
-            if (err) { return next(err); }
-            if (results.publisher==null) { // No results.
-                var err = new Error('Publisher not found');
-                err.status = 404;
-                return next(err);
-            }
-            // Success.
-            res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher });
-        });
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.publisher == null) { // No results.
+            var err = new Error('Publisher not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Success.
+        res.render('publisher_form', { title: 'Update Publisher', publisher: results.publisher });
+    });
 };
 
 // Handle publisher update on POST.
@@ -210,11 +209,11 @@ exports.publisher_update_post = [
         const errors = validationResult(req);
 
         // Create a Publisher object with escaped/trimmed data and old id.
-        var publisher = new Publisher(
-          { name: req.body.name,
+        var publisher = new Publisher({
+            name: req.body.name,
             description: req.body.description,
             _id: req.params.id // This is required, or a new ID will be assigned
-           });
+        });
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
@@ -225,7 +224,7 @@ exports.publisher_update_post = [
                 },
             }, function(err, results) {
                 if (err) { return next(err); }
-                if (results.publisher==null) { // No results.
+                if (results.publisher == null) { // No results.
                     var err = new Error('Publisher not found');
                     err.status = 404;
                     return next(err);
@@ -238,8 +237,7 @@ exports.publisher_update_post = [
         else {
             // Data from form is valid. Update the record.
             // Check if Publisher with same name already exists.
-            Publisher.findOne({ 'name': req.body.name })
-            .exec( function(err, found_publisher) {
+            Publisher.findOne({ 'name': req.body.name }).exec(function(err, found_publisher) {
                 if (err) { return next(err); }
 
                 if (found_publisher) {
@@ -247,9 +245,9 @@ exports.publisher_update_post = [
                     res.redirect(found_publisher.url);
                 }
                 else {
-                    Publisher.findByIdAndUpdate(req.params.id, publisher, {}, function (err, thepublisher) {
+                    Publisher.findByIdAndUpdate(req.params.id, publisher, {}, function(err, thepublisher) {
                         if (err) { return next(err); }
-                        // Successful - redirect to publisher detail page.
+                        // Success. Redirect to publisher detail page.
                         res.redirect(thepublisher.url);
                     });
                 }

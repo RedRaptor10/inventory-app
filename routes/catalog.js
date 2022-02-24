@@ -14,7 +14,7 @@ var genre_controller = require('../controllers/genreController');
 // GET catalog home page.
 router.get('/', game_controller.index);
 
-// GET request for creating a Game. NOTE This must come before routes that display Game (uses id).
+// GET request for creating a Game. NOTE: This must come before routes that display Game (uses id).
 router.get('/game/create', game_controller.game_create_get);
 
 // POST request for creating Game.
@@ -40,7 +40,7 @@ router.get('/games', game_controller.game_list);
 
 /// PUBLISHER ROUTES ///
 
-// GET request for creating Publisher. NOTE This must come before route for id (i.e. display publisher).
+// GET request for creating Publisher. NOTE: This must come before route for id (i.e. display publisher).
 router.get('/publisher/create', publisher_controller.publisher_create_get);
 
 // POST request for creating Publisher.
@@ -66,7 +66,7 @@ router.get('/publishers', publisher_controller.publisher_list);
 
 /// GENRE ROUTES ///
 
-// GET request for creating a Genre. NOTE This must come before route that displays Genre (uses id).
+// GET request for creating a Genre. NOTE: This must come before route that displays Genre (uses id).
 router.get('/genre/create', genre_controller.genre_create_get);
 
 // POST request for creating Genre.
@@ -92,7 +92,7 @@ router.get('/genres', genre_controller.genre_list);
 
 /// PLATFORM ROUTES ///
 
-// GET request for creating a Platform. NOTE This must come before route that displays Platform (uses id).
+// GET request for creating a Platform. NOTE: This must come before route that displays Platform (uses id).
 router.get('/platform/create', platform_controller.platform_create_get);
 
 // POST request for creating Platform.
