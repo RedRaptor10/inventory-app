@@ -48,6 +48,13 @@ table {
 }
 /* End Reset */
 
+:root {
+  --primary-color: rgb(0, 64, 128);
+  --primary-color-light: rgb(64, 128, 192);
+  --background-color: rgb(24, 24, 24);
+  --background-color-dark: rgb(16, 16, 16);
+}
+
 body {
   background: rgb(24, 24, 24);
   color: rgb(224, 224, 224);
@@ -79,7 +86,7 @@ button {
 
 header {
   display: flex;
-  background: rgb(0, 64, 128);
+  background: var(--primary-color);
   padding: 32px;
   cursor: default;
 }
@@ -118,8 +125,25 @@ main {
   padding: 32px;
 }
 
+main h1 {
+  margin: 16px 0 16px 0;
+}
+
 .btn {
-  background: rgb(0, 64, 128);
+  background: var(--primary-color);
+}
+
+.user-btns-container {
+  display: flex;
+  justify-content: center;
+  padding: 64px 0 64px 0;
+}
+
+.user-btn {
+  margin-right: 32px;
+  padding: 8px 12px 8px 12px;
+  font-size: 24px;
+  border-radius: 4px;
 }
 
 /* Home */
@@ -133,8 +157,7 @@ main {
 }
 
 .site-stats {
-  background: rgb(16, 16, 16);
-  margin-top: 16px;
+  background: var(--background-color-dark);
   padding: 24px;
 }
 
@@ -158,7 +181,6 @@ main {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 16px;
 }
 
 .game {
@@ -180,13 +202,13 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgb(16, 16, 16);
+  background: var(--background-color-dark);
   width: 100%;
   height: 100%;
 }
 
 .game-info {
-  background: rgb(0, 64, 128);
+  background: var(--primary-color);
   padding: 8px;
   text-align: center;
 }
@@ -205,22 +227,9 @@ main {
   font-size: 16px;
 }
 
-.create-btns-section {
-  display: flex;
-  justify-content: center;
-  padding: 64px 0 64px 0;
-}
-
-.create-btn {
-  margin-right: 32px;
-  padding: 8px 12px 8px 12px;
-  font-size: 24px;
-}
-
 /* Lists */
 .list {
-  background: rgb(16, 16, 16);
-  margin-top: 16px;
+  background: var(--background-color-dark);
   padding: 24px;
   width: 25%;
   font-size: 20px;
@@ -230,9 +239,45 @@ main {
   margin-bottom: 12px;
 }
 
+/* Game Details */
+.game-details {
+  display: flex;
+  padding: 0 32px 0 32px;
+}
+
+.game-details-info {
+  padding-left: 12px;
+  font-size: 20px;
+}
+
+.game-details-info a {
+  color: var(--primary-color-light);
+}
+
+.game-details-info a:hover {
+  color: #fff;
+}
+
+.game-details-info p {
+  margin-bottom: 12px;
+}
+
+.game-details-label {
+  font-weight: bold;
+}
+
+.game-details-description {
+  margin: 16px 0 16px 0;
+}
+
+/* Publisher / Genre / Platform Details */
+.details {
+  margin-bottom: 16px;
+}
+
 /* Footer */
 footer {
-  background: rgb(0, 64, 128);
+  background: var(--primary-color);
   padding: 24px;
   text-align: center;
 }

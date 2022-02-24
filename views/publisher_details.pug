@@ -1,25 +1,30 @@
 extends layout
 
 block content
-  h1 #{title}
+  h1= title
 
-  p #[strong Description:] #{publisher.description}
+  p(class='details') #{publisher.description}
 
-  div(style='margin-left: 20px; margin-top: 20px')
+  div(class='game-list')
+    each game in publisher_games
+      div(class='game')
+        a(href=game.url)
+          div(class='game-poster-container')
+            if game.posterId
+              img(class='game-poster' src='/uploads/' + game.posterId alt=game.title)
+            else
+              div(class='game-poster-empty')
+                span #{game.title}
+        div(class='game-info')
+            div(class='game-info-title')
+              a(href=game.url) #{game.title}
+            div(class='game-info-publisher')
+              a(href=publisher.url) #{publisher.name}
+    else
+      span No games
 
-    h4 Games
-
-    dl
-      each game in publisher_games
-        dt
-          a(href=game.url) #{game.title}
-        dd #{game.description}
-
-      else
-        p No games.
-
-  hr
-  p
-    a(href=publisher.url+'/delete') Delete Publisher
-  p
-    a(href=publisher.url+'/update') Update Publisher
+  section(class='user-btns-container')
+    button(class='btn user-btn')
+      a(href=publisher.url + '/update') Update
+    button(class='btn user-btn')
+      a(href=publisher.url + '/delete') Delete

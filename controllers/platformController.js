@@ -24,7 +24,8 @@ exports.platform_details = function(req, res) {
             .exec(callback);
         },
         platform_games: function(callback) {
-            Game.find({ 'platform': req.params.id })
+            Game.find({ 'platform': req.params.id }, 'title publisher posterId')
+            .populate('publisher')
             .exec(callback);
         },
     }, function(err, results) {

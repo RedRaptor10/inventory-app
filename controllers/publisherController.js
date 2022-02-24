@@ -24,7 +24,7 @@ exports.publisher_details = function(req, res, next) {
             .exec(callback)
         },
         publisher_games: function(callback) {
-            Game.find({ 'publisher': req.params.id }, 'name description')
+            Game.find({ 'publisher': req.params.id }, 'title posterId')
             .exec(callback)
         },
     }, function(err, results) {

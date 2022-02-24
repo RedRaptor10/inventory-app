@@ -24,7 +24,8 @@ exports.genre_details = function(req, res, next) {
             .exec(callback);
         },
         genre_games: function(callback) {
-            Game.find({ 'genre': req.params.id })
+            Game.find({ 'genre': req.params.id }, 'title publisher posterId')
+            .populate('publisher')
             .exec(callback);
         },
     }, function(err, results) {

@@ -3,27 +3,43 @@ extends layout
 block content
   h1 #{title}
 
-  if game.posterId
-    img(src='/uploads/' + game.posterId)
+  section(class='game-details')
+    div(class='game')
+      div(class='game-poster-container')
+        if game.posterId
+          img(class='game-poster' src='/uploads/' + game.posterId alt=game.title)
+        else
+          div(class='game-poster-empty')
+            span #{game.title}
 
-  p #[strong Publisher:] 
-    a(href=game.publisher.url) #{game.publisher.name}
-  p #[strong Description:] #{game.description}
-  p #[strong Genre(s):] 
-    each g, index in game.genre
-      a(href=g.url) #{g.name}
-      if index < game.genre.length - 1
-        |, 
-  p #[strong Platform(s):] 
-    each p, index in game.platform
-      a(href=p.url) #{p.name}
-      if index < game.platform.length - 1
-        |, 
-  p #[strong Price:] $#{game.price}
-  p #[strong Qty:] #{game.qty}
+    div(class='game-details-info')
+      p
+        span(class='game-details-label') Publisher: 
+        a(href=game.publisher.url) #{game.publisher.name}
+      p
+        span(class='game-details-label') Description:
+        div(class='game-details-description') #{game.description}
+      p
+        span(class='game-details-label') Genres: 
+        each genre, index in game.genre
+          a(href=genre.url) #{genre.name}
+          if index < game.genre.length - 1
+            |, 
+      p
+        span(class='game-details-label') Platforms: 
+        each p, index in game.platform
+          a(href=p.url) #{p.name}
+          if index < game.platform.length - 1
+            |, 
+      p
+        span(class='game-details-label') Price: 
+        |$#{game.price}
+      p
+        span(class='game-details-label') Qty: 
+        |#{game.qty}
 
-  hr
-  p
-    a(href=game.url+'/delete') Delete Game
-  p
-    a(href=game.url+'/update') Update Game
+  section(class='user-btns-container')
+    button(class='btn user-btn')
+      a(href=game.url + '/update') Update
+    button(class='btn user-btn')
+      a(href=game.url + '/delete') Delete
