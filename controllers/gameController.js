@@ -409,21 +409,21 @@ exports.game_update_post = [
                 if (results.game.posterId) {
                     prevPosterId = results.game.posterId;
                 }
-            });
 
-            // Data from form is valid. Update the record.
-            Game.findByIdAndUpdate(req.params.id, game, {}, function (err, thegame) {
-                if (err) { return next(err); }
+                // Data from form is valid. Update the record.
+                Game.findByIdAndUpdate(req.params.id, game, {}, function (err, thegame) {
+                    if (err) { return next(err); }
 
-                // Delete previous game poster
-                if (prevPosterId != '') {
-                    fs.unlink('public/uploads/' + prevPosterId, (err) => {
-                        if (err) { return console.log(err); }
-                    });
-                }
+                    // Delete previous game poster
+                    if (prevPosterId != '') {
+                        fs.unlink('public/uploads/' + prevPosterId, (err) => {
+                            if (err) { return console.log(err); }
+                        });
+                    }
 
-                // Success. Redirect to game detail page.
-                res.redirect(thegame.url);
+                    // Success. Redirect to game detail page.
+                    res.redirect(thegame.url);
+                });
             });
         }
     }
