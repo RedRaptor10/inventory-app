@@ -26,13 +26,29 @@ block content
     div(class='featured-container')
       h1 Featured Games
       div(class='featured')
-        for featured_game in featured_games
-          a(href='catalog/game/' + featured_game._id)
-            div(class='featured-game-container')
-              if featured_game.posterId
-                img(class='featured-game' src='/uploads/' + featured_game.posterId alt=featured_game.title)
-              else
-                div(class='featured-game-empty')
-                  span #{featured_game.title}
-        button(class='view-all-games-btn')
+        each game in featured_games
+          div(class='game')
+            a(href=game.url)
+              div(class='game-poster-container')
+                if game.posterId
+                  img(class='game-poster' src='uploads/' + game.posterId alt=game.title)
+                else
+                  div(class='game-poster-empty')
+                    span #{game.title}
+            div(class='game-info')
+              div(class='game-info-title')
+                a(href=game.url) #{game.title}
+              div(class='game-info-publisher')
+                a(href=game.publisher.url) #{game.publisher.name}
+        button(class='btn view-all-games-btn')
           a(href='catalog/games') View All
+
+  section(class='create-btns-section')
+    button(class='btn create-btn')
+      a(href='catalog/game/create') Create Game
+    button(class='btn create-btn')
+      a(href='catalog/publisher/create') Create Publisher
+    button(class='btn create-btn')
+      a(href='catalog/genre/create') Create Genre
+    button(class='btn create-btn')
+      a(href='catalog/platform/create') Create Platform
