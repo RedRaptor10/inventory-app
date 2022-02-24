@@ -23,9 +23,12 @@ exports.index = function(req, res) {
         },
         platform_count: function(callback) {
             Platform.countDocuments({}, callback);
-        }
+        },
+        featured_games: function(callback) {
+            Game.find().limit(4).exec(callback);
+        },
     }, function(err, results) {
-        res.render('index', { title: 'Home', error: err, data: results });
+        res.render('index', { title: 'Home', error: err, data: results, featured_games: results.featured_games });
     });
 };
 
