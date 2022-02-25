@@ -192,6 +192,10 @@ main h1 {
   margin: 0 16px 16px 0;
 }
 
+.game {
+  max-width: 200px;
+}
+
 .game-poster-container {
   width: 200px;
   height: 250px;
@@ -210,6 +214,7 @@ main h1 {
   background: var(--background-color-dark);
   width: 100%;
   height: 100%;
+  text-align: center;
 }
 
 .game-info {
@@ -244,10 +249,13 @@ main h1 {
   margin-bottom: 12px;
 }
 
-/* Game Details */
+/* Details */
+.details {
+  margin-bottom: 16px;
+}
+
 .game-details {
   display: flex;
-  padding: 0 32px 0 32px;
 }
 
 .game-details-info {
@@ -273,11 +281,6 @@ main h1 {
 
 .game-details-description {
   margin: 16px 0 16px 0;
-}
-
-/* Publisher / Genre / Platform Details */
-.details {
-  margin-bottom: 16px;
 }
 
 /* Forms */
