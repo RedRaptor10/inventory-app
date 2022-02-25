@@ -1,20 +1,21 @@
 extends layout
 
 block content
-  h1 #{title}
+  h1=title
 
-  form(method='POST' action='')
-    div.form-group
-      label(for='name') Name:
-      input#name.form-control(type='text', placeholder='Action, Fighting, First-person Shooter, etc.' name='name' value=(undefined===genre ? '' : genre.name) required)
-    if genre
+  div.form
+    form(method='POST' action='')
       div.form-group
+        label(for='name') Name:
+        input#name.input-block(type='text', placeholder='Action, Fighting, First-person Shooter, etc.' name='name' value=(undefined===genre ? '' : genre.name) required)
+      if genre
+        div.form-group
           label(for='admin-password') Admin Password:
-          input#admin-password.form-control(type='password' name='admin-password' required)
+          input#admin-password.input-block(type='password' name='admin-password' required)
 
-    if errors
-      ul
-        for error in errors
-          li!= error.msg
+      if errors
+        ul
+          for error in errors
+            li!= error.msg
 
-    button.btn.btn-primary(type='submit') Submit
+      button(class='btn user-btn form-btn' type='submit') Submit

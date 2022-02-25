@@ -4,19 +4,21 @@ block content
   h1=title
 
   form(method='POST' action='')
-    div.form-group
-      label(for='name') Name:
-      input#name.form-control(type='text' placeholder='Name' name='name' required='true' value=(undefined===publisher ? '' : publisher.name))
-      label(for='description') Description:
-      textarea#description.form-control(type='textarea' placeholder='Description' name='description') #{undefined===publisher ? '' : publisher.description}
-    if publisher
+    div.form
       div.form-group
+        label(for='name') Name:
+        input#name.input-block(type='text' name='name' required='true' value=(undefined===publisher ? '' : publisher.name))
+      div.form-group
+        label(for='description') Description:
+        textarea#description.input-block(type='textarea' name='description') #{undefined===publisher ? '' : publisher.description}
+      if publisher
+        div.form-group
           label(for='admin-password') Admin Password:
-          input#admin-password.form-control(type='password' name='admin-password' required)
+          input#admin-password.input-block(type='password' name='admin-password' required)
 
     if errors
       ul
         for error in errors
           li!= error.msg
 
-    button.btn.btn-primary(type='submit') Submit
+    button(class='btn user-btn form-btn' type='submit') Submit

@@ -22,18 +22,18 @@ block content
                 div(class='game-info-publisher')
                   a(href=game.publisher.url) #{game.publisher.name}
     else
+      div(class='form')
         p Do you really want to delete this Genre?
-
         form(method='POST' action='')
           div.form-group
-          input#genreid.form-control(type='hidden' name='genreid' required value=genre._id)
+            input#genreid(type='hidden' name='genreid' required value=genre._id)
           div.form-group
               label(for='admin-password') Admin Password: 
-              input#admin-password.form-control(type='password' name='admin-password' required)
+              input#admin-password.input-block(type='password' name='admin-password' required)
 
           if errors
             ul(class='errors')
               for error in errors
                 li!= error.msg
 
-          button(class='btn user-btn' type='submit') Delete
+          button(class='btn user-btn form-btn' type='submit') Delete
