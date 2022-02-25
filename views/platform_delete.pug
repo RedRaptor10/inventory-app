@@ -1,35 +1,39 @@
 extends layout
 
 block content
-  h1 #{title}: #{platform.name}
+  h1 #{title} #{platform.name}
 
-  if platform_games.length
+  div(class='delete-prompt')
+    if platform_games.length
+      p Delete the following games before attempting to delete this Platform.
+      div(class='game-list')
+        each game in platform_games
+          div(class='game')
+            a(href=game.url)
+              div(class='game-poster-container')
+                if game.posterId
+                  img(class='game-poster' src='/uploads/' + game.posterId alt=game.title)
+                else
+                  div(class='game-poster-empty')
+                    span #{game.title}
+            div(class='game-info')
+                div(class='game-info-title')
+                  a(href=game.url) #{game.title}
+                div(class='game-info-publisher')
+                  a(href=game.publisher.url) #{game.publisher.name}
+    else
+        p Do you really want to delete this platform?
 
-    p #[strong Delete the following games before attempting to delete this platform.]
+        form(method='POST' action='')
+          div.form-group
+          input#platformid.form-control(type='hidden' name='platformid' required value=platform._id)
+          div.form-group
+              label(for='admin-password') Admin Password: 
+              input#admin-password.form-control(type='password' name='admin-password' required)
 
-    div(style='margin-left:20px;margin-top:20px')
+          if errors
+            ul(class='errors')
+              for error in errors
+                li!= error.msg
 
-      h4 Games
-
-      dl
-      each game in platform_games
-        dt
-          a(href=game.url) #{game.title}
-        dd #{game.description}
-
-  else
-    p Do you really want to delete this Platform?
-
-    form(method='POST' action='')
-      div.form-group
-        input#platformid.form-control(type='hidden',name='platformid', required='true', value=platform._id )
-      div.form-group
-        label(for='admin-password') Admin Password:
-        input#admin-password.form-control(type='password' name='admin-password' required)
-
-      if errors
-        ul
-          for error in errors
-            li!= error.msg
-
-      button.btn.btn-primary(type='submit') Delete
+          button(class='btn user-btn' type='submit') Delete

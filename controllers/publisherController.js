@@ -105,7 +105,7 @@ exports.publisher_delete_get = function(req, res, next) {
             res.redirect('/catalog/publishers');
         }
         // Successful, so render.
-        res.render('publisher_delete', { title: 'Delete Publisher', publisher: results.publisher, publisher_games: results.publisher_games } );
+        res.render('publisher_delete', { title: 'Delete', publisher: results.publisher, publisher_games: results.publisher_games } );
     });
 };
 
@@ -139,7 +139,7 @@ exports.publisher_delete_post = [
                     res.redirect('/catalog/publishers');
                 }
                 // Successful, so render.
-                res.render('publisher_delete', { title: 'Delete Publisher', publisher: results.publisher,
+                res.render('publisher_delete', { title: 'Delete', publisher: results.publisher,
                     publisher_games: results.publisher_games, errors: errors.array() } );
             });
         } else {

@@ -103,7 +103,7 @@ exports.platform_delete_get = function(req, res) {
             res.redirect('/catalog/platforms');
         }
         // Success.
-        res.render('platform_delete', { title: 'Delete Platform', platform: results.platform, platform_games: results.platform_games } );
+        res.render('platform_delete', { title: 'Delete', platform: results.platform, platform_games: results.platform_games } );
     });
 };
 
@@ -136,7 +136,7 @@ exports.platform_delete_post = [
                     res.redirect('/catalog/platforms');
                 }
                 // Success.
-                res.render('platform_delete', { title: 'Delete Platform', platform: results.platform,
+                res.render('platform_delete', { title: 'Delete', platform: results.platform,
                     platform_games: results.platform_games, errors: errors.array() });
             });
         } else {

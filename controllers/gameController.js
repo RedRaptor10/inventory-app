@@ -203,7 +203,7 @@ exports.game_delete_get = function(req, res, next) {
             return next(err);
         }
 
-        res.render('game_delete', { title: 'Delete Game', game: results.game } );
+        res.render('game_delete', { title: 'Delete', game: results.game } );
     });
 };
 
@@ -232,7 +232,7 @@ exports.game_delete_post = [
                 if (results.game == null) { // No results.
                     res.redirect('/catalog/games');
                 }
-                res.render('game_delete', { title: 'Delete Game', game: results.game, errors: errors.array() } );
+                res.render('game_delete', { title: 'Delete', game: results.game, errors: errors.array() } );
             });
         } else {
             async.parallel({

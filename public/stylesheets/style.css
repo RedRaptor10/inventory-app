@@ -131,6 +131,11 @@ main h1 {
 
 .btn {
   background: var(--primary-color);
+  color: rgb(224, 224, 224);
+}
+
+.btn:hover {
+  color: #fff;
 }
 
 .user-btns-container {
@@ -273,6 +278,36 @@ main h1 {
 /* Publisher / Genre / Platform Details */
 .details {
   margin-bottom: 16px;
+}
+
+/* Delete */
+.game-delete {
+  display: flex;
+  padding: 0 32px 0 32px;
+}
+
+.delete-prompt {
+  padding: 16px;
+}
+
+.delete-prompt p {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.form-group {
+  padding: 8px 0 8px 0;
+}
+
+.form-group input {
+  font-size: 16px;
+  border: 0;
+  border-radius: 4px;
+}
+
+.errors {
+  padding: 16px 0 16px 0;
+  color: rgb(255, 0, 0);
 }
 
 /* Footer */

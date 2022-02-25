@@ -99,11 +99,11 @@ exports.genre_delete_get = function(req, res) {
         },
       }, function(err, results) {
           if (err) { return next(err); }
-          if (results.genre==null) { // No results.
+          if (results.genre == null) { // No results.
               res.redirect('/catalog/genres');
           }
           // Success.
-          res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_games: results.genre_games } );
+          res.render('genre_delete', { title: 'Delete', genre: results.genre, genre_games: results.genre_games } );
       });
 };
 
@@ -136,7 +136,7 @@ exports.genre_delete_post = [
                     res.redirect('/catalog/genres');
                 }
                 // Successful, so render.
-                res.render('genre_delete', { title: 'Delete Genre', genre: results.genre,
+                res.render('genre_delete', { title: 'Delete', genre: results.genre,
                     genre_games: results.genre_games, errors: errors.array() } );
             });
         } else {

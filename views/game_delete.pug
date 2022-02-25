@@ -1,20 +1,31 @@
 extends layout
 
 block content
-  h1 #{title}: #{game.title}
+  h1 #{title} #{game.title}
 
-  p Do you really want to delete this Game?
+  section(class='game-delete')
+    div(class='game')
+      a(href=game.url)
+        div(class='game-poster-container')
+          if game.posterId
+            img(class='game-poster' src='/uploads/' + game.posterId alt=game.title)
+          else
+            div(class='game-poster-empty')
+              span #{game.title}
 
-  form(method='POST' action='')
-    div.form-group
-    input#gameid.form-control(type='hidden', name='gameid', required='true', value=game._id )
-    div.form-group
-        label(for='admin-password') Admin Password:
-        input#admin-password.form-control(type='password' name='admin-password' required)
+    div(class='delete-prompt')
+      p Do you really want to delete this Game?
 
-    if errors
-      ul
-        for error in errors
-          li!= error.msg
+      form(method='POST' action='')
+        div.form-group
+        input#gameid.form-control(type='hidden' name='gameid' required value=game._id)
+        div.form-group
+            label(for='admin-password') Admin Password: 
+            input#admin-password.form-control(type='password' name='admin-password' required)
 
-    button.btn.btn-primary(type='submit') Delete
+        if errors
+          ul(class='errors')
+            for error in errors
+              li!= error.msg
+
+        button(class='btn user-btn' type='submit') Delete
