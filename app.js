@@ -20,7 +20,7 @@ const nconf = require("nconf");
 // Setup nconf
 nconf.argv()
   .env()
-  .file({ file: './config.json' });
+  .file({ file: 'config.json' });
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
