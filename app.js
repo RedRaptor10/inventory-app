@@ -13,9 +13,18 @@ var catalogRouter = require('./routes/catalog');
 
 var app = express();
 
+// Security Configuration
+//require("dotenv").config();
+const nconf = require("nconf");
+
+// Setup nconf
+nconf.argv()
+  .env()
+  .file({ file: './config.json' });
+
 // Set up mongoose connection
 var mongoose = require('mongoose');
-var mongoDB = 'mongodb+srv://inventoryAppUser:inventoryAppPassword@cluster0.oevsc.mongodb.net/inventory-app?retryWrites=true&w=majority';
+var mongoDB = 'mongodb+srv://' + nconf.get('MONGODB_USERNAME') + ':' + nconf.get('MONGODB_PASSWORD') + '@cluster0.oevsc.mongodb.net/inventory-app?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
