@@ -15,13 +15,13 @@ var app = express();
 
 // Security Configuration
 //require("dotenv").config();
-const nconf = require("nconf");
+var nconf = require("nconf");
 
 // Setup nconf
 nconf.argv()
   .env()
   .file({ file: __dirname + '/config.json' });
-
+console.log(nconf.get('MONGODB_USERNAME') + ' ' + nconf.get('MONGODB_PASSWORD'));
 // Set up mongoose connection
 var mongoose = require('mongoose');
 var mongoDB = 'mongodb+srv://' + nconf.get('MONGODB_USERNAME') + ':' + nconf.get('MONGODB_PASSWORD') + '@cluster0.oevsc.mongodb.net/inventory-app?retryWrites=true&w=majority';
