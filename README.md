@@ -4,6 +4,8 @@ An inventory app created in NodeJS using Express through [TheOdinProject](https:
 
 [View Demo](https://glacial-tor-43943.herokuapp.com/)
 
+![Inventory App](/assets/preview.jpg)
+
 # Features
 
 - Create data and write to database
